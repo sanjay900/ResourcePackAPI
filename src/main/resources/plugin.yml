@@ -1,0 +1,21 @@
+name: ResourcePackAPI
+main: net.tangentmc.resourcepackapi.ResourcePackAPI
+load: STARTUP
+version: @version@
+authors: [sanjay900]
+depend: [ProtocolLib, WorldGuard, BKCommonLib]
+commands:
+  customItems:
+    aliases: cit
+  giveCustomItem:
+    aliases: gci
+  uploadCustomItems:
+    aliases: upci
+  updateCustomItem:
+    aliases: uci
+  getCustomItemInfo:
+    aliases: ici
+  viewCustomItems:
+    aliases: vci
+  pickCustomItem:
+    aliases: pci

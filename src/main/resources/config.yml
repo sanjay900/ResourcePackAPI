@@ -1,0 +1,34 @@
+resourcepackapi:
+  pack_name: "pack.zip"
+  enable_dropbox: false
+  dropbox:
+    #the folder to store the zip file inside
+    folder_path: ""
+    access_token: ""
+    #This field will automatically be filled on first upload
+    uploaded_url: ""
+  enable_local: false
+  local:
+    #the folder to store the zip file inside
+    folder_path: ""
+    url: ""
+  enable_ftp: false
+  ftp:
+    hostname: ""
+    #the folder to store the zip file inside
+    server_path: ""
+    url: ""
+    auth:
+      username: ""
+      password: ""
+  enable_sftp: false
+  sftp:
+    hostname: ""
+    #the folder to store the zip file inside
+    server_path: ""
+    url: ""
+    auth:
+      keyBasedAuthentication: false
+      username: ""
+      password: ""
+      key_file: ""
