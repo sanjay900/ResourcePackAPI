@@ -1,9 +1,6 @@
 package net.tangentmc.resourcepackapi.destinations;
 
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
+import com.jcraft.jsch.*;
 import lombok.Getter;
 import net.tangentmc.resourcepackapi.ResourcePackAPI;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -21,7 +18,7 @@ public class SFTP extends Destination {
     @Getter
     private String url;
     @Getter
-    private String hash;
+    private byte[] hash;
     public SFTP(ConfigurationSection config) {
         super(config);
         config = config.getConfigurationSection("sftp");
@@ -32,18 +29,18 @@ public class SFTP extends Destination {
         serverPath = config.getString("server_path");
         key = config.getString("auth.key_file");
         isKeyBased = config.getBoolean("auth.keyBasedAuthentication");
-        hash = config.getString("zip_hash");
+        hash = encoder.decode(config.getString("zip_hash"));
     }
 
     @Override
-    public void uploadZip(byte[] zip) throws Exception {
+    public UploadResult uploadZip(byte[] zip, String fileName) throws JSchException, SftpException {
         Session s = null;
         ChannelSftp chan = null;
         try {
             s = getSession();
             chan = getSFTPChannel(s);
             chan.cd(serverPath);
-            chan.put(new ByteArrayInputStream(zip),zipName);
+            chan.put(new ByteArrayInputStream(zip),fileName);
         } finally {
             if(chan!= null) {
                 chan.exit();
@@ -53,9 +50,13 @@ public class SFTP extends Destination {
                 s.disconnect();
             }
         }
+        return new UploadResult(url.replace(zipName, fileName),DigestUtils.sha1(zip));
+    }
 
-        hash = DigestUtils.sha1Hex(zip).toLowerCase();
-        ResourcePackAPI.getInstance().getConfig().set("resourcepackapi.sftp.zip_hash",this.hash);
+    @Override
+    public void uploadZipAndSave(byte[] zip) throws JSchException, SftpException {
+        this.hash = uploadZip(zip, zipName).getHash();
+        ResourcePackAPI.getInstance().getConfig().set("resourcepackapi.sftp.zip_hash",encoder.encode(this.hash));
         ResourcePackAPI.getInstance().saveConfig();
     }
 

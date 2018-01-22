@@ -20,7 +20,7 @@ public class Dropbox extends Destination {
     @Getter
     private String url;
     @Getter
-    private String hash;
+    private byte[] hash;
 
     public Dropbox(ConfigurationSection config) {
         super(config);
@@ -28,12 +28,12 @@ public class Dropbox extends Destination {
         this.accessToken = config.getString("access_token");
         this.serverPath = config.getString("folder_path");
         this.url = config.getString("uploaded_url");
-        this.hash = config.getString("zip_hash");
+        this.hash = encoder.decode(config.getString("zip_hash"));
     }
 
     @Override
-    public void uploadZip(byte[] zip) throws DbxException, IOException {
-        String fileName = serverPath+zipName;
+    public UploadResult uploadZip(byte[] zip, String fileName) throws DbxException, IOException {
+        fileName = serverPath+fileName;
         //If there was a problem deleting, then there probably was nothing to delete.
         try {
             getDropBoxClient().files().delete(fileName);
@@ -41,10 +41,17 @@ public class Dropbox extends Destination {
         getDropBoxClient().files().uploadBuilder(fileName)
                 .withMode(WriteMode.OVERWRITE)
                 .uploadAndFinish(new ByteArrayInputStream(zip));
-        url = getDropBoxClient().sharing().createSharedLinkWithSettings(fileName).getUrl()+DOWNLOAD_OPTION;
-        hash = DigestUtils.sha1Hex(zip).toLowerCase();
+        String url = getDropBoxClient().sharing().createSharedLinkWithSettings(fileName).getUrl()+DOWNLOAD_OPTION;
+        return new UploadResult(url, DigestUtils.sha1(zip));
+    }
+
+    @Override
+    public void uploadZipAndSave(byte[] zip) throws DbxException, IOException {
+        UploadResult result = uploadZip(zip, zipName);
+        url = result.getUrl();
+        hash = result.getHash();
         ResourcePackAPI.getInstance().getConfig().set("resourcepackapi.dropbox.uploaded_url",this.url);
-        ResourcePackAPI.getInstance().getConfig().set("resourcepackapi.dropbox.zip_hash",this.hash);
+        ResourcePackAPI.getInstance().getConfig().set("resourcepackapi.dropbox.zip_hash",encoder.encode(this.hash));
         ResourcePackAPI.getInstance().saveConfig();
     }
 

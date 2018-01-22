@@ -49,7 +49,9 @@ public class EventListener implements Listener {
     }
     @EventHandler
     public void playerJoin(PlayerJoinEvent evt) {
-        Bukkit.getScheduler().runTaskLater(ResourcePackAPI.getInstance(),()-> ResourcePackAPI.getInstance().updatePacks(evt.getPlayer()),1L);
+        if (util.getConfig().getBoolean("enable_automatic_pack_load")) {
+            Bukkit.getScheduler().runTaskLater(ResourcePackAPI.getInstance(), () -> ResourcePackAPI.getInstance().updatePacks(evt.getPlayer()), 1L);
+        }
     }
     @EventHandler
     public void blockPlace(PlayerInteractEvent event) {

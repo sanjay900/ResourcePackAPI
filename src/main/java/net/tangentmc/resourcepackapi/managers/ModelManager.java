@@ -1,7 +1,8 @@
 package net.tangentmc.resourcepackapi.managers;
 
 import com.bergerkiller.bukkit.common.nbt.CommonTagCompound;
-import net.tangentmc.resourcepackapi.ResourceCollection;
+import net.tangentmc.resourcepackapi.registry.ResourceCollection;
+import net.tangentmc.resourcepackapi.registry.ResourceRegistryImpl;
 import net.tangentmc.resourcepackapi.utils.ModelInfo;
 import net.tangentmc.resourcepackapi.utils.ModelType;
 import org.bukkit.configuration.ConfigurationSection;
@@ -10,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,15 +20,18 @@ import static net.tangentmc.resourcepackapi.ResourcePackAPI.ITEM_TAG;
 
 public class ModelManager {
     private MappingManager handler;
-    private ResourceRegistry registry;
+    private ResourceRegistryImpl registry;
     private HashMap<String, ModelInfo> loadedModelsPrefixed = new HashMap<>();
     private HashMap<String, ModelInfo> loadedModels = new HashMap<>();
-    public ModelManager(MappingManager handler, ResourceRegistry registry) {
+    private HashMap<ResourceCollection, List<ModelInfo>> modelsInCollection = new HashMap<>();
+    public ModelManager(MappingManager handler, ResourceRegistryImpl registry) {
         this.handler = handler;
         this.registry = registry;
         registry.registerAdditionHandler(this::loadCollection);
     }
     private void loadCollection(ResourceCollection resources) {
+        List<ModelInfo> list = new ArrayList<>();
+        modelsInCollection.put(resources, list);
         ConfigurationSection config = resources.getModelConfig();
         for (String key: config.getKeys(false)) {
             String model = key.replace("\\","/");
@@ -43,6 +48,7 @@ public class ModelManager {
             info.load(fullModel, handler);
             loadedModelsPrefixed.put(fullModel, info);
             loadedModels.put(model, info);
+            list.add(info);
 
         }
         for (ModelType type: ModelType.values()) {
@@ -98,6 +104,7 @@ public class ModelManager {
             this.loadedModels.put(model, info);
             collection.getModelConfig().set(model, info);
             collection.save();
+            modelsInCollection.get(collection).add(info);
         }
     }
     public List<ModelInfo> getForType(ModelType type) {

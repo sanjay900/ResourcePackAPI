@@ -1,6 +1,6 @@
-package net.tangentmc.resourcepackapi.managers;
+package net.tangentmc.resourcepackapi.registry;
 
-import net.tangentmc.resourcepackapi.ResourceCollection;
+import net.tangentmc.resourcepackapi.registry.ResourceCollection;
 import net.tangentmc.resourcepackapi.ResourcePackAPI;
 import net.tangentmc.resourcepackapi.utils.ModelInfo;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -11,10 +11,10 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class ResourceRegistry {
+public class ResourceRegistryImpl implements ResourceRegistry {
     private List<Consumer<ResourceCollection>> eventHandlers = new ArrayList<>();
     private HashMap<String, ResourceCollection> resourcePacks = new HashMap<>();
-    public ResourceRegistry() {
+    public ResourceRegistryImpl() {
         ConfigurationSerialization.registerClass(ModelInfo.class, "ModelInfo");
         registerDefault();
     }
@@ -30,7 +30,11 @@ public class ResourceRegistry {
         ResourceCollection def = new ResourceCollection("ResourcePackAPI", pluginDir, ResourcePackAPI.getInstance());
         registerResources(def);
     }
-
+    public void unregisterResources(List<ResourceCollection> resources) {
+        for (ResourceCollection resource : resources) {
+            resourcePacks.remove(resource.getName());
+        }
+    }
     public ResourceCollection getResources(String name) {
         return resourcePacks.get(name);
     }

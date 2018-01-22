@@ -26,9 +26,9 @@ public class Uploader {
             handlerList.add(new SFTP(section));
         }
     }
-    public void uploadZIP(byte[] zip) throws Exception {
+    public void uploadZip(byte[] zip) throws Exception {
         for (Destination destination : handlerList) {
-            destination.uploadZip(zip);
+            destination.uploadZipAndSave(zip);
         }
     }
     public String getDefaultResourcePackURL() {

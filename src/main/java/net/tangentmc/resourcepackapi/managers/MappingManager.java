@@ -2,13 +2,10 @@ package net.tangentmc.resourcepackapi.managers;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import net.tangentmc.resourcepackapi.ResourceCollection;
+import net.tangentmc.resourcepackapi.registry.ResourceCollection;
 import net.tangentmc.resourcepackapi.ResourcePackAPI;
 import net.tangentmc.resourcepackapi.DefaultDisplay;
-import net.tangentmc.resourcepackapi.model.Override;
-import net.tangentmc.resourcepackapi.model.predicates.*;
+import net.tangentmc.resourcepackapi.registry.ResourceRegistryImpl;
 import net.tangentmc.resourcepackapi.utils.ModelType;
 import net.tangentmc.resourcepackapi.utils.Utils;
 import org.apache.commons.io.IOUtils;
@@ -31,8 +28,8 @@ public class MappingManager {
     private Map<ModelType,Map<String,Short>> mappingNonCombined = new HashMap<>();
     private Map<String,Map<String,Short>> mappingToSave = new HashMap<>();
     private File mappingFile;
-    private ResourceRegistry registry;
-    public MappingManager(ResourceRegistry registry) throws IOException {
+    private ResourceRegistryImpl registry;
+    public MappingManager(ResourceRegistryImpl registry) throws IOException {
         this.registry = registry;
         //Start at key 1, damage 0 is dedicated to the default item
         //items includes blocks.

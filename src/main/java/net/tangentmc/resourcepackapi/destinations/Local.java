@@ -12,21 +12,27 @@ public class Local extends Destination {
     private String path;
     private String url;
     @Getter
-    private String hash;
+    private byte[] hash;
 
     public Local(ConfigurationSection config) {
         super(config);
         config = config.getConfigurationSection("local");
         path = config.getString("folder_path");
         url = config.getString("url");
-        this.hash = config.getString("zip_hash");
+        this.hash = encoder.decode(config.getString("zip_hash"));
     }
 
     @Override
-    public void uploadZip(byte[] zip) throws Exception {
+    public UploadResult uploadZip(byte[] zip, String fileName) throws Exception {
+        Files.write(Paths.get(path.replace(zipName, fileName)),zip);
+        return new UploadResult(url.replace(zipName, fileName),DigestUtils.sha1(zip));
+    }
+
+    @Override
+    public void uploadZipAndSave(byte[] zip) throws Exception {
         Files.write(Paths.get(path),zip);
-        hash = DigestUtils.sha1Hex(zip).toLowerCase();
-        ResourcePackAPI.getInstance().getConfig().set("resourcepackapi.local.zip_hash",this.hash);
+        hash = DigestUtils.sha1(zip);
+        ResourcePackAPI.getInstance().getConfig().set("resourcepackapi.local.zip_hash",encoder.encode(this.hash));
         ResourcePackAPI.getInstance().saveConfig();
     }
 

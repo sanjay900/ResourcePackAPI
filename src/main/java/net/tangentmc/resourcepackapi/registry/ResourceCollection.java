@@ -1,4 +1,4 @@
-package net.tangentmc.resourcepackapi;
+package net.tangentmc.resourcepackapi.registry;
 
 import lombok.Getter;
 import lombok.SneakyThrows;

@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
-import net.tangentmc.resourcepackapi.ResourceCollection;
 import net.tangentmc.resourcepackapi.ResourcePackAPI;
 import net.tangentmc.resourcepackapi.managers.MappingManager;
 import org.bukkit.Material;

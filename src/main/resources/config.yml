@@ -1,5 +1,7 @@
 resourcepackapi:
   pack_name: "pack.zip"
+  #Should this plugin automatically send the resource pack when a player joins?
+  enable_automatic_pack_load: true
   enable_dropbox: false
   dropbox:
     #the folder to store the zip file inside

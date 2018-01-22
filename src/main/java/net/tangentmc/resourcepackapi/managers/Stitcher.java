@@ -1,9 +1,9 @@
 package net.tangentmc.resourcepackapi.managers;
 
 import lombok.AllArgsConstructor;
-import net.tangentmc.resourcepackapi.ResourceCollection;
-import net.tangentmc.resourcepackapi.ResourcePackAPI;
+import net.tangentmc.resourcepackapi.registry.ResourceCollection;
 import net.tangentmc.resourcepackapi.model.ModelGenerator;
+import net.tangentmc.resourcepackapi.registry.ResourceRegistryImpl;
 import net.tangentmc.resourcepackapi.utils.ModelType;
 import net.tangentmc.resourcepackapi.utils.Utils;
 import org.apache.commons.io.IOUtils;
@@ -15,7 +15,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
@@ -24,7 +23,7 @@ import java.util.zip.ZipOutputStream;
 public class Stitcher {
     private static final String MODEL_PREFIX = "assets/minecraft/models/";
     private MappingManager handler;
-    private ResourceRegistry registry;
+    private ResourceRegistryImpl registry;
     private ModelGenerator generator;
     private String stripPrefix(String str) {
         str = str.replace(MODEL_PREFIX,"");
