@@ -110,7 +110,7 @@ public class ResourcePackAPI extends JavaPlugin{
      * @param toUse The resource collections to use, in order of priority (first = lowest, blocks can be overridden, last = highest, will override all other blocks)
      * @return the uploaded pack's url and hash
      */
-    public ResourcePack uploadPackSpecific(String packName, List<ResourceCollection> toUse) {
+    public ResourcePack uploadPack(String packName, List<ResourceCollection> toUse) {
         try {
             Collection<ResourceCollection> collections = registry.getResourcePacks();
             registry.unregisterResources(collections);
@@ -126,15 +126,11 @@ public class ResourcePackAPI extends JavaPlugin{
     /**
      * Upload the resultant resource pack to the first configured destination, and return the url and hash
      * @param packName the zip file to create
-     * @param toIgnore A list of resourceCollections to ignore when creating this pack
      * @return the uploaded pack's url and hash
      */
-    public ResourcePack uploadPack(String packName, List<ResourceCollection> toIgnore) {
+    public ResourcePack uploadPack(String packName) {
         try {
-            registry.unregisterResources(toIgnore);
-            ResourcePack result = uploader.getDefault().uploadZip(stitcher.stitchZIP(), packName);
-            toIgnore.forEach(registry::registerResources);
-            return result;
+            return uploader.getDefault().uploadZip(stitcher.stitchZIP(), packName);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -148,6 +144,7 @@ public class ResourcePackAPI extends JavaPlugin{
                 if (getConfig().getBoolean("enable_automatic_pack_load")) {
                     updatePacks();
                 }
+                saveConfig();
             } catch (Exception e) {
                 e.printStackTrace();
             }

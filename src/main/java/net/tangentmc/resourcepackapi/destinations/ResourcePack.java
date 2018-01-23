@@ -29,6 +29,6 @@ public class ResourcePack {
     }
     public void save(ConfigurationSection section) {
         section.set("url", url);
-        section.set("hash", hash);
+        section.set("hash", encoder.encode(hash));
     }
 }
