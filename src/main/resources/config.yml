@@ -1,36 +1,34 @@
 resourcepackapi:
-  pack_name: "pack.zip"
-  #Should this plugin automatically send the resource pack when a player joins?
+  default_pack_name: pack.zip
   enable_automatic_pack_load: true
-  enable_dropbox: false
   dropbox:
-    #the folder to store the zip file inside
-    folder_path: ""
-    access_token: ""
-    #This field will automatically be filled on first upload
-    uploaded_url: ""
-  enable_local: false
+    enabled: false
+    folder_path:
+    access_token:
+    resource_pack:
+      url:
   local:
-    #the folder to store the zip file inside
-    folder_path: ""
-    url: ""
-  enable_ftp: false
+    folder_path:
+    enabled: false
+    resource_pack:
+      url:
   ftp:
-    hostname: ""
-    #the folder to store the zip file inside
-    server_path: ""
-    url: ""
+    enabled: false
+    hostname:
+    server_path:
+    resource_pack:
+      url:
     auth:
-      username: ""
-      password: ""
-  enable_sftp: false
+      username:
+      password:
   sftp:
-    hostname: ""
-    #the folder to store the zip file inside
-    server_path: ""
-    url: ""
+    enabled: false
+    hostname:
+    server_path:
+    resource_pack:
+      url:
     auth:
       keyBasedAuthentication: false
-      username: ""
-      password: ""
-      key_file: ""
+      username:
+      password:
+      key_file:

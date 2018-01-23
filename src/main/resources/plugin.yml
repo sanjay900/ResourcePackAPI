@@ -3,7 +3,7 @@ main: net.tangentmc.resourcepackapi.ResourcePackAPI
 load: STARTUP
 version: @version@
 authors: [sanjay900]
-depend: [ProtocolLib, WorldGuard, BKCommonLib]
+depend: [BKCommonLib]
 commands:
   customItems:
     aliases: cit

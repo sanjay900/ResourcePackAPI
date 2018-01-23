@@ -1,17 +1,29 @@
 package net.tangentmc.resourcepackapi.destinations;
 
-import com.google.common.io.BaseEncoding;
+import lombok.Getter;
+import net.tangentmc.resourcepackapi.ResourcePackAPI;
 import org.bukkit.configuration.ConfigurationSection;
 
 public abstract class Destination {
-    //TODO: can we make a version that uploads but lets you pick a different zip name, so we can generate multiple zips and switch between?
-    String zipName;
-    BaseEncoding encoder = BaseEncoding.base16().lowerCase();
-    Destination(ConfigurationSection config) {
-        this.zipName = config.getString("pack_name");
+    @Getter
+    private ResourcePack resourcePack;
+    @Getter
+    private boolean enabled;
+    private ConfigurationSection section = null;
+    Destination(ConfigurationSection section) {
+        this.enabled = section.getBoolean("enabled");
+        if (enabled) {
+            section = section.getConfigurationSection("resource_pack");
+            resourcePack = new ResourcePack(section);
+        }
     }
-    public abstract UploadResult uploadZip(byte[] zip, String fileName) throws Exception;
-    public abstract void uploadZipAndSave(byte[] zip) throws Exception;
-    public abstract String getUrl();
-    public abstract byte[] getHash();
+    public abstract ResourcePack uploadZip(byte[] zip, String fileName) throws Exception;
+    public void uploadZipAndSave(byte[] zip) throws Exception {
+        resourcePack = uploadZip(zip, ResourcePackAPI.getInstance().getDefaultResourcePackName());
+        resourcePack.save(section);
+        ResourcePackAPI.getInstance().saveConfig();
+    }
+    String getCustomUrl(String fileName) {
+        return resourcePack.getUrl().replace(ResourcePackAPI.getInstance().getDefaultResourcePackName(), fileName);
+    }
 }

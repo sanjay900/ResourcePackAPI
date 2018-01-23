@@ -9,39 +9,27 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-public class FTP extends Destination {
+public class Ftp extends Destination {
     private String username;
     private String password;
-    @Getter
-    private String url;
     private String uploadPath;
     private String hostname;
-    @Getter
-    private byte[] hash;
 
-    public FTP(ConfigurationSection config) {
+    public Ftp(ConfigurationSection config) {
         super(config);
-        config = config.getConfigurationSection("ftp");
-        this.username = config.getString("auth.username");
-        this.password = config.getString("auth.password");
-        this.url = config.getString("url");
-        this.uploadPath = config.getString("server_path");
-        this.hostname = config.getString("hostname");
-        this.hash = encoder.decode(config.getString("zip_hash"));
+        if (isEnabled()) {
+            this.username = config.getString("auth.username");
+            this.password = config.getString("auth.password");
+            this.uploadPath = config.getString("server_path");
+            this.hostname = config.getString("hostname");
+        }
     }
 
     @Override
-    public UploadResult uploadZip(byte[] zip, String fileName) throws IOException {
+    public ResourcePack uploadZip(byte[] zip, String fileName) throws IOException {
         FTPClient client = getFTPConnection();
         client.storeFile(uploadPath + fileName,new ByteArrayInputStream(zip));
-        return new UploadResult(url.replace(zipName, fileName),DigestUtils.sha1(zip));
-    }
-
-    @Override
-    public void uploadZipAndSave(byte[] zip) throws IOException {
-        hash = uploadZip(zip, zipName).getHash();
-        ResourcePackAPI.getInstance().getConfig().set("resourcepackapi.ftp.zip_hash",encoder.encode(this.hash));
-        ResourcePackAPI.getInstance().saveConfig();
+        return new ResourcePack(getCustomUrl(fileName),DigestUtils.sha1(zip));
     }
 
     private FTPClient getFTPConnection() throws IOException {

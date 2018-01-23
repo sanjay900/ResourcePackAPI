@@ -14,26 +14,27 @@ import java.util.stream.Collectors;
 public class ResourceRegistryImpl implements ResourceRegistry {
     private List<Consumer<ResourceCollection>> eventHandlers = new ArrayList<>();
     private HashMap<String, ResourceCollection> resourcePacks = new HashMap<>();
+    private List<ResourceCollection> orderedPacks = new ArrayList<>();
     public ResourceRegistryImpl() {
         ConfigurationSerialization.registerClass(ModelInfo.class, "ModelInfo");
         registerDefault();
     }
     public void registerResources(ResourceCollection collection) {
+        orderedPacks.add(collection);
         resourcePacks.put(collection.getName(), collection);
         eventHandlers.forEach(handler -> handler.accept(collection));
     }
     public Collection<ResourceCollection> getResourcePacks() {
-        return Collections.unmodifiableCollection(resourcePacks.values());
+        return Collections.unmodifiableCollection(orderedPacks);
     }
     private void registerDefault() {
         Path pluginDir = ResourcePackAPI.getInstance().getDataFolder().toPath();
         ResourceCollection def = new ResourceCollection("ResourcePackAPI", pluginDir, ResourcePackAPI.getInstance());
         registerResources(def);
     }
-    public void unregisterResources(List<ResourceCollection> resources) {
-        for (ResourceCollection resource : resources) {
-            resourcePacks.remove(resource.getName());
-        }
+    public void unregisterResources(Collection<ResourceCollection> resources) {
+        orderedPacks.removeAll(resources);
+        resourcePacks.values().removeAll(resources);
     }
     public ResourceCollection getResources(String name) {
         return resourcePacks.get(name);
