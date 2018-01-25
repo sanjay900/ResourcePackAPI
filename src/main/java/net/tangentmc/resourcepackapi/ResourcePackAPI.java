@@ -1,6 +1,7 @@
 package net.tangentmc.resourcepackapi;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import net.tangentmc.resourcepackapi.destinations.Destination;
 import net.tangentmc.resourcepackapi.destinations.ResourcePack;
@@ -44,6 +45,9 @@ public class ResourcePackAPI extends JavaPlugin{
     private ResourceRegistryImpl registry;
     @Getter
     private String defaultResourcePackName;
+    @Getter
+    @Setter
+    private boolean uploadAutomatically;
 
     @Override
     public void onEnable() {
@@ -141,7 +145,7 @@ public class ResourcePackAPI extends JavaPlugin{
             try {
                 modelManager.update();
                 uploader.uploadZip(stitcher.stitchZIP());
-                if (getConfig().getBoolean("enable_automatic_pack_load")) {
+                if (uploadAutomatically) {
                     updatePacks();
                 }
                 saveConfig();

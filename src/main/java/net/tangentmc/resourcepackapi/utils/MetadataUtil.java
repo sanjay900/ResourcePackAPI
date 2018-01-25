@@ -3,10 +3,7 @@ package net.tangentmc.resourcepackapi.utils;
 import com.bergerkiller.bukkit.common.nbt.CommonTagCompound;
 import com.bergerkiller.bukkit.common.utils.ItemUtil;
 import com.bergerkiller.bukkit.common.utils.NBTUtil;
-import lombok.SneakyThrows;
 import net.tangentmc.resourcepackapi.ResourcePackAPI;
-import org.apache.commons.codec.binary.Base64InputStream;
-import org.apache.commons.codec.binary.Base64OutputStream;
 import org.bukkit.Bukkit;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.Entity;
@@ -15,10 +12,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.util.Arrays;
 
 @SuppressWarnings("unchecked")
@@ -39,15 +34,15 @@ public class MetadataUtil implements Listener {
             }
         }
     }
-    private CommonTagCompound fromTag(String tag) {
-        return fromString(tag.split(TAG_IDENTIFIER)[1]);
+    private JSONObject fromTag(String tag) {
+        return new JSONObject(tag.split(TAG_IDENTIFIER)[1]);
 
     }
-    public static CommonTagCompound get(Entity entity) {
+    public static JSONObject get(Entity entity) {
         if (entity.hasMetadata(TAG_IDENTIFIER)) {
-            return (CommonTagCompound) entity.getMetadata(TAG_IDENTIFIER).get(0).value();
+            return (JSONObject) entity.getMetadata(TAG_IDENTIFIER).get(0).value();
         }
-        return new CommonTagCompound();
+        return new JSONObject();
     }
 
     /**
@@ -55,8 +50,8 @@ public class MetadataUtil implements Listener {
      * @param entity the entity to add metadata to
      * @param metadata the metadata to add
      */
-    public static void set(Entity entity, CommonTagCompound metadata) {
-        entity.addScoreboardTag(TAG_IDENTIFIER+toString(metadata));
+    public static void set(Entity entity, JSONObject metadata) {
+        entity.addScoreboardTag(TAG_IDENTIFIER+ metadata.toString());
         entity.setMetadata(TAG_IDENTIFIER,new FixedMetadataValue(ResourcePackAPI.getInstance(),metadata));
     }
     public static CommonTagCompound get(ItemStack stack) {
@@ -79,18 +74,6 @@ public class MetadataUtil implements Listener {
         EntityUtils.writeBlockState(spawner, c);
 
 
-    }
-    @SneakyThrows
-    private static CommonTagCompound fromString(String nbt) {
-        ByteArrayInputStream bais = new ByteArrayInputStream(nbt.getBytes());
-        return CommonTagCompound.readFromStream(new Base64InputStream(bais));
-    }
-    @SneakyThrows
-    private static String toString(CommonTagCompound nbt) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        OutputStream os = new Base64OutputStream(baos);
-        nbt.writeToStream(os);
-        return baos.toString();
     }
 
 }

@@ -53,7 +53,8 @@ public class EntityManager {
         ArmorStand as = (ArmorStand) l.getWorld().spawnEntity(l.add(0,-1,0) , EntityType.ARMOR_STAND);
         as.setHelmet(getItemStack(info));
         as.setVisible(false);
-        MetadataUtil.set(as, infoHandler.createMetadata(info));
+        as.addScoreboardTag("ModelType:"+info.getModelType());
+        as.addScoreboardTag("ModelID:"+info.getId());
     }
 
     public ItemStack getItemStack(String item) {
@@ -70,7 +71,7 @@ public class EntityManager {
         return infoHandler.getModelInfo(MetadataUtil.get((CreatureSpawner) block.getState()));
     }
     public ModelInfo getModelInfo(Entity entity) {
-        return infoHandler.getModelInfo(MetadataUtil.get(entity));
+        return infoHandler.getModelInfo(entity.getScoreboardTags());
     }
 
 }

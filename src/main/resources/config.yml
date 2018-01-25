@@ -1,6 +1,5 @@
 resourcepackapi:
   default_pack_name: pack.zip
-  enable_automatic_pack_load: true
   dropbox:
     enabled: false
     folder_path:

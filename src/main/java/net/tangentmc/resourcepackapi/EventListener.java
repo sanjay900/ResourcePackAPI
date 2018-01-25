@@ -1,9 +1,9 @@
 package net.tangentmc.resourcepackapi;
 
 import net.tangentmc.resourcepackapi.managers.EntityManager;
+import net.tangentmc.resourcepackapi.utils.EntityUtils;
 import net.tangentmc.resourcepackapi.utils.ModelInfo;
 import net.tangentmc.resourcepackapi.utils.ModelType;
-import net.tangentmc.resourcepackapi.utils.EntityUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -49,7 +49,7 @@ public class EventListener implements Listener {
     }
     @EventHandler
     public void playerJoin(PlayerJoinEvent evt) {
-        if (util.getConfig().getBoolean("enable_automatic_pack_load")) {
+        if (util.isUploadAutomatically()) {
             Bukkit.getScheduler().runTaskLater(ResourcePackAPI.getInstance(), () -> ResourcePackAPI.getInstance().updatePacks(evt.getPlayer()), 1L);
         }
     }

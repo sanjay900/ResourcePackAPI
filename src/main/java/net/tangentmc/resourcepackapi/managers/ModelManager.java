@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static net.tangentmc.resourcepackapi.ResourcePackAPI.ITEM_TAG;
@@ -115,5 +116,22 @@ public class ModelManager {
         loadedModels.clear();
         loadedModelsPrefixed.clear();
         registry.getResourcePacks().forEach(this::loadCollection);
+    }
+
+    public ModelInfo getModelInfo(Set<String> scoreboardTags) {
+        String id = null;
+        ModelType type = null;
+        for (String scoreboardTag : scoreboardTags) {
+            if (scoreboardTag.startsWith("ModelType:")) {
+                type = ModelType.valueOf(scoreboardTag.split("ModelType:")[1]);
+            }
+            if (scoreboardTag.startsWith("ModelID:")) {
+                id = scoreboardTag.split("ModelID:")[1];
+            }
+        }
+        if (type != null && id != null) {
+            return getModelInfo(id);
+        }
+        return null;
     }
 }
